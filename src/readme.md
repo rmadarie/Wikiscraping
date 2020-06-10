@@ -1,3 +1,6 @@
-# Wikipedia virus films scraping
+# Wikipedia scraping
 
-Some code to scrape and parse Wikipedia film pages
+Example Python code to scrape and parse information from Wikipedia on films about viral outbreaks.
+
+Start page is: https://en.wikipedia.org/wiki/Category:Films_about_viral_outbreaks
+
