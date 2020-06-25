@@ -3,11 +3,12 @@ import os
 import csv
 
 folder = "C:\\path\\to\\files" # provide path to folder with source codes
-csvfilename = "wikifilms_database.csv"
+csvfilename = "wikifilms_database.csv" # name of final database
 
 colNames = ['title', 'directors', 'releasedate']
 csvDatabase = [colNames]
 
+# clean up director list, sometimes messy format
 def cleanDirectors(directors):
     if len(directors) == 1:
         return directors[0]
@@ -21,7 +22,9 @@ def cleanDirectors(directors):
         directors = ""
         return directors
 
-# note: releasedate still looks messy, you'll have to make it prettier afterwards..
+# clean up release date as above
+# note: releasedate still looks messy, 
+# you'll have to make it prettier yourself (after parsing)..
 def cleanReleasedates(releasedate):
     if releasedate:
         releasedate = releasedate[0].replace("\n", "; ")
@@ -30,13 +33,15 @@ def cleanReleasedates(releasedate):
         releasedate = ""
         return releasedate
 
+# put desired info in the Information box in a single list
 def getBoxInfo(source):
     box = source.find("table", class_="infobox vevent")
     rows = box.find_all("tr")
     directors = []
     releasedate = []
     
-    title = source.find("h1").text # get film title (from webpage heading, not info box!)
+    # get film title (from webpage heading, not Info box!)
+    title = source.find("h1").text 
     print(title) # keep track of films processed by parser
     
     for row in rows:
@@ -56,7 +61,7 @@ def getBoxInfo(source):
             releasedate_raw = row.find("td").text.strip()
             releasedate.append(releasedate_raw)
     
-    directors = cleanDirectors(directors) # clean up director list, sometimes messy format
+    directors = cleanDirectors(directors) # clean up director list
     releasedate = cleanReleasedates(releasedate) # clean up release date as above
     boxInfo = [title, directors, releasedate] # put all collected info from one film in a single list
     csvDatabase.append(boxInfo) # attach film list to list of all films
@@ -66,6 +71,7 @@ def parser(folder):
     # loop over html files in folder
     for filename in os.listdir(folder):
         if filename.endswith(".html"):
+            # open that file and parse source code
             with open(folder + "\\" + filename, 'r', encoding='utf-8') as file:
                sourcecode = BeautifulSoup(file, 'html.parser')
                getBoxInfo(sourcecode)
@@ -79,7 +85,7 @@ def parser(folder):
 def toCSV(csvfile):
     with open(csvfile, 'w', newline='', encoding='utf-8') as output:
         writer = csv.writer(output, delimiter=',')
-        writer.writerows(csvDatabase)
+        writer.writerows(csvDatabase) # you done! did it work? I hope so...
 
 parser(folder) # path to html files that will be parsed
 toCSV(csvfilename) # write to csv file
